@@ -1,0 +1,175 @@
+/*
+  Joystick and servo motor
+
+  modified on 21 Jul 2019
+  by Saeed Hosseini @ Electropeak
+  Home
+  This code is based on https://www.arduino.cc/en/Tutorial/Smoothing
+*/
+#include <Servo.h>
+
+Servo myservo;
+
+const int X = 0;
+const int Y = 1;
+
+const int MaxReadings = 10;
+
+int Xreadings[MaxReadings];
+int XreadIndex = 0;
+int Xtotal = 0;
+int X_Pos = 0;
+
+int Yreadings[MaxReadings];
+int YreadIndex = 0;
+int Ytotal = 0;
+int Y_Pos = 0;
+
+int Servo_Pos = 0, Pos = 0;
+
+void Smoother(int x_pin, int y_pin)
+{
+  Xtotal = Xtotal - Xreadings[XreadIndex];
+  Ytotal = Ytotal - Yreadings[YreadIndex];
+  delay(1);
+  Xreadings[XreadIndex] = analogRead(x_pin);
+  Yreadings[YreadIndex] = analogRead(y_pin);
+  delay(1);
+  Xtotal = Xtotal + Xreadings[XreadIndex];
+  Ytotal = Ytotal + Yreadings[YreadIndex];
+  delay(1);
+  XreadIndex = XreadIndex + 1;
+  YreadIndex = YreadIndex + 1;
+  if (XreadIndex >= MaxReadings) XreadIndex = 0;
+  if (YreadIndex >= MaxReadings) YreadIndex = 0;
+  delay(1);
+  X_Pos = Xtotal / MaxReadings;
+  Y_Pos = Ytotal / MaxReadings;
+
+}
+
+
+void setup() {
+
+  Serial.begin(9600);
+  myservo.attach(9);
+  for (int i = 0; i < MaxReadings; i++) {
+    Xreadings[i] = 0;
+    Yreadings[i] = 0;
+  }
+}
+
+void loop() {
+  Smoother(X, Y);
+  Servo_Pos = map(X_Pos, 0, 1023, 0, 180);
+  myservo.write(Servo_Pos);
+  Serial.println(Servo_Pos);
+  delay(20);
+}
+
+------------------------------------------------------------------------------------------------------------------
+#include <Servo.h>
+#define LASER 11
+
+int x = 0;
+
+Servo servo_1;  // create servo object to control a servo
+Servo servo_2;
+
+// Arduino pin numbers
+const int SW_pin = 2; // digital pin connected to switch output
+const int X_pin = 0; // analog pin connected to X output
+const int Y_pin = 1; // analog pin connected to Y output
+
+int butt;
+int joy_val;
+
+void setup() {
+ pinMode(SW_pin, INPUT);
+  digitalWrite(SW_pin, HIGH);
+  servo_1.attach(9);// attaches the servo on pin 9 to the servo object
+  servo_2.attach(10);
+  pinMode(LASER, OUTPUT);
+  digitalWrite(LASER, HIGH);
+  Serial.begin(9600);
+}
+
+void loop() {
+  joy_val = analogRead(X_pin); // reads the value of joystick (between 0-1023)
+  joy_val = map(joy_val, 0, 1023, 0, 180); // servo value between 0-180
+  servo_1.write(joy_val); // sets the servo position according to the joystick value
+  delay(150);
+
+  joy_val = analogRead(Y_pin); // reads the value of joystick (between 0-1023)
+  joy_val = map(joy_val, 0, 1023, 0, 180); // servo value between 0-180
+  servo_2.write(joy_val); // sets the servo position according to the joystick 
+value
+  delay(150);
+  delay(15);
+
+  butt = digitalRead(SW_pin);
+
+  if (butt == LOW){
+    x = true;
+  }
+
+  if (x == true){
+    digitalWrite(LASER, LOW);
+    Serial.print(x);
+  }
+}
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+Delay to smoothen joystick
+
+#include <Servo.h>
+#include <math.h>
+
+Servo servo_1; // servo controller (multiple can exist)
+
+int servo_pin = 3; // PWM pin for servo control
+int joy_pin_x = A0; // pin for x-dir joystick
+int joy_pin_y = A1; // pin for y-dir joystick
+int offset_x = 0; // subtracting the initial joystick x-location
+int offset_y = 0; // subtracting the initial joystick y-location
+int pos = 90;    // servo starting position aligned with joystick
+int prev_deg = 0; // bound for reducing jitter
+int x_prev = 0; // bound for reducing jitter
+int y_prev = 0; // reducing jitter
+
+void setup() {
+  servo_1.attach(servo_pin); // start servo control
+  Serial.begin(9600);
+  servo_1.write(pos); // move to center (joystick neutral)
+  Serial.println("Positioned at 90 Degrees");  
+  offset_x = analogRead(joy_pin_x); // initial joystick x-val
+  offset_y = analogRead(joy_pin_y); // initial joystick y-val
+}
+
+void loop() {
+  int x_val = analogRead(joy_pin_x)-offset_x; // relative joystick x
+  int y_val = analogRead(joy_pin_y)-offset_y; // relative joystick y
+  if (abs(x_prev-x_val)<10 and abs(y_prev-y_val)<10){
+    // reduce jitter
+  } else {
+    x_prev = x_val;
+    y_prev = y_val;
+    float deg = 180-(int(atan2(x_val,y_val)*(180.0/PI))+90); // angle calc
+    if (abs(deg-prev_deg)>2 and deg>0 and deg<180){
+      servo_1.write(deg); // move servo to joystick location
+      delay(abs(deg-prev_deg)*(10.0/6.0));
+      prev_deg = deg;
+      Serial.println(deg); // print out degree
+    }
+  }
+}
+---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
