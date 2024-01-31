@@ -9,7 +9,7 @@ void setup()
 
 { 
 
-  Sg90servo.attach(4);  // attaches the servo on pin 4 to the servo object 
+  Sg90servo.attach(4);  // attaches the servo on pin 4 to the servo object ...  PIN 6 FOR MY PROJECT
 
 } 
 
