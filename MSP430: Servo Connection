@@ -1,0 +1,41 @@
+#include <Servo.h> 
+
+
+Servo sg90servo;    // create servo object to control a servo 
+
+int angle = 0;    // variable to store the servo position 
+
+void setup() 
+
+{ 
+
+  Sg90servo.attach(4);  // attaches the servo on pin 4 to the servo object 
+
+} 
+
+void loop() 
+
+{ 
+
+  for(angle = 0; angle< 180; angle++)  // goes from 0 degrees to 180 degrees 
+
+  {                                       // in steps of 1 degree 
+
+    Sg90servo.write(angle);              // tell servo to go to position in variable 'angle’ 
+
+    delay(20);                       // waits 20ms for the servo to reach the position 
+
+  } 
+
+  for(angle = 180;angle>=1; angle--)     // goes from 180 degrees to 0 degrees 
+
+  {                                
+
+    Sg90servo.write(angle);              // tell servo to go to position in variable 'angle' 
+
+    delay(20);                       // waits 20ms for the servo to reach the position 
+
+  } 
+
+}
+
