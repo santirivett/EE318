@@ -156,3 +156,12 @@ void main(void)
     }
 }
 
+
+--------------------------------------------------------------------------------------------------------------------------
+
+#pragma vector = TIMER0_A0_VECTOR
+__interrupt void Timer_A_ISR(void)
+{
+    // Add any additional processing if needed
+}
+
