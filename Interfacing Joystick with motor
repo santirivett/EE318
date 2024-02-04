@@ -165,6 +165,90 @@ void loop() {
 }
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+#include <stdint.h>
+#include <intrinsics.h>
+
+#define PWM_PERIOD 20000  // 20ms period for standard servo
+
+// Servo pins
+#define SERVO1_PIN 3
+#define SERVO2_PIN 5
+
+// Joystick pins
+#define JOY_X_PIN 0
+#define JOY_Y_PIN 1
+
+volatile uint16_t joyVal;
+volatile uint16_t servo1Pos, servo2Pos;
+
+void initServoPins() {
+    // Set up PWM pins for servos
+    // You need to configure these based on your microcontroller and pin mappings
+    // Example assumes P3.3 and P3.5 as servo pins
+    // You may need to adjust based on your specific hardware
+    // Refer to your microcontroller's datasheet and user manual
+
+    // Configure SERVO1_PIN (P3.3)
+    // ...
+
+    // Configure SERVO2_PIN (P3.5)
+    // ...
+}
+
+void initTimerPWM() {
+    // Initialize timer for PWM
+    // You need to configure these based on your microcontroller and timer settings
+    // Example assumes Timer_A0 for PWM
+    // You may need to adjust based on your specific hardware
+    // Refer to your microcontroller's datasheet and user manual
+
+    // Initialize Timer_A0 for PWM
+    // ...
+}
+
+void initJoystick() {
+    // You need to configure these based on your microcontroller and pin mappings
+    // Example assumes P1.0 and P1.1 as joystick analog pins
+    // You may need to adjust based on your specific hardware
+    // Refer to your microcontroller's datasheet and user manual
+
+    // Configure JOY_X_PIN (P1.0)
+    // ...
+
+    // Configure JOY_Y_PIN (P1.1)
+    // ...
+}
+
+void setServoPosition(uint16_t pin, uint16_t position) {
+    // Set the PWM duty cycle based on the desired servo position
+    // You need to implement this based on your microcontroller's PWM features
+    // Example assumes Timer_A0 for PWM
+    // You may need to adjust based on your specific hardware
+    // Refer to your microcontroller's datasheet and user manual
+
+    // Set PWM duty cycle based on position
+    // ...
+}
+
+void setup() {
+    initServoPins();
+    initTimerPWM();
+    initJoystick();
+}
+
+void loop() {
+    // Read joystick values
+    joyVal = analogRead(JOY_X_PIN);
+    servo1Pos = map(joyVal, 0, 1023, 0, 180);
+    setServoPosition(SERVO1_PIN, servo1Pos);
+
+    joyVal = analogRead(JOY_Y_PIN);
+    servo2Pos = map(joyVal, 0, 1023, 0, 180);
+    setServoPosition(SERVO2_PIN, servo2Pos);
+
+    // Add a delay if needed
+    __no_operation();
+}
 
 
 
