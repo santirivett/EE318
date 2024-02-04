@@ -101,3 +101,58 @@ void main(void)
         __delay_cycles(10000);
     }
 }
+
+
+
+---------------------------------------------------------------------------------------------------------------------
+
+
+#include <msp430.h>
+#include <driverlib.h>
+
+#define JOY_X_PIN GPIO_PIN0  // Replace with the actual pin numbers
+#define JOY_Y_PIN GPIO_PIN1
+#define SERVO1_PIN GPIO_PIN3
+#define SERVO2_PIN GPIO_PIN5
+
+void main(void)
+{
+    // Stop watchdog timer
+    WDT_A_hold(WDT_A_BASE);
+
+    // Initialize GPIO for Joystick and Servos
+    GPIO_setAsInputPin(GPIO_PORT_P1, JOY_X_PIN);
+    GPIO_setAsInputPin(GPIO_PORT_P1, JOY_Y_PIN);
+    GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P1, SERVO1_PIN, GPIO_PRIMARY_MODULE_FUNCTION);
+    GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P1, SERVO2_PIN, GPIO_PRIMARY_MODULE_FUNCTION);
+
+    // Initialize Timer A for PWM (you might need to configure this based on your specific servo)
+    Timer_A_initUpModeParam initUpParam = {0};
+    initUpParam.clockSource = TIMER_A_CLOCKSOURCE_SMCLK;
+    initUpParam.clockSourceDivider = TIMER_A_CLOCKSOURCE_DIVIDER_1;
+    initUpParam.timerPeriod = 20000;  // Adjust this value based on your servo's specifications
+    initUpParam.compareRegister = TIMER_A_CAPTURECOMPARE_REGISTER_1;
+    initUpParam.compareOutputMode = TIMER_A_OUTPUTMODE_RESET_SET;
+
+    Timer_A_initUpMode(TIMER_A0_BASE, &initUpParam);
+    Timer_A_startCounter(TIMER_A0_BASE, TIMER_A_UP_MODE);
+
+    while (1)
+    {
+        // Read the value of joystick (between 0-1023)
+        int joyValX = analogRead(JOY_X_PIN);
+        int joyValY = analogRead(JOY_Y_PIN);
+
+        // Map joystick values to servo range (0-180)
+        int mappedValX = map(joyValX, 0, 1023, 0, 180);
+        int mappedValY = map(joyValY, 0, 1023, 0, 180);
+
+        // Set the servo positions according to the joystick values
+        Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_1, mappedValX);
+        Timer_A_setCompareValue(TIMER_A0_BASE, TIMER_A_CAPTURECOMPARE_REGISTER_2, mappedValY);
+
+        // Add a delay (adjust as needed)
+        __delay_cycles(1500000);
+    }
+}
+
