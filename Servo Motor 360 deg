@@ -1,0 +1,29 @@
+void ConfigureMotor()
+{
+     WDTCTL = WDTPW | WDTHOLD; // Stop watchdog timer
+     GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN7);        // PWM pin on MSP430
+     P1SEL0 |= BIT7;                                      //selection for timer setting
+
+         // 180 degrees rotation back and forth
+
+         /*TA0CCR0 = 20000;            // PWM period   20ms
+         TA0CCTL1 |= OUTMOD_7;         //CCR1 reset/set
+         TA0CCR1 = 1500;             // Internal duty cycle  1.5ms
+         TA0CTL = TASSEL_2 + MC_1; */
+
+         while(1)
+       {
+          TA0CCR0 = 20000;  //PWM period
+          TA0CCR1 = 1500;  //CCR1 PWM Duty Cycle  !min 350 max 2600 angle 190,
+          //350 2350-180 degrees
+          TA0CCTL1 = OUTMOD_7;  //CCR1 selection reset-set
+          TA0CTL = TASSEL_2|MC_1;   //SMCLK submain clock,upmode
+          __delay_cycles(1500000);
+          TA0CCR1 = 2600;
+          TA0CCTL1 = OUTMOD_7;  //CCR1 selection reset-set
+          TA0CTL = TASSEL_2|MC_1;
+          __delay_cycles(1500000);
+
+          }
+
+}
