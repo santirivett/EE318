@@ -2,6 +2,7 @@
 
 
 #define ADC_THRESHOLD        1000    // Threshold value to detect joystick movement
+volatile unsigned int adcValue = 0;
 
 // ADC interrupt service routine
 
@@ -12,7 +13,7 @@
        {
            // ADC conversion complete
            case ADCIV_ADCIFG:
-           int adc_value = ADCMEM0;                      // Store ADC value
+           adcValue = ADCMEM0;                      // Store ADC value
            break;
        }
    }
