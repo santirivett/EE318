@@ -12,7 +12,7 @@
        {
            // ADC conversion complete
            case ADCIV_ADCIFG:
-               adc_value = ADCMEM0; // Store ADC value
+           int adc_value = ADCMEM0;                      // Store ADC value
            break;
        }
    }
@@ -42,7 +42,7 @@ void main(void)
             }
             else
             {
-                // Joystick in neutral position, do nothing
+                // Joystick should do nothing but wait till adcValue changes
             }
         }
 
