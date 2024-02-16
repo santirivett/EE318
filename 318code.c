@@ -19,7 +19,7 @@ void setupadc()
    //Step 2: Configure CLK source
 
     ADCCTL0 |= ADCSHT_2 | ADCON;               // Sample and hold time, ADC on, 16 ADCCLK cycles
-    ADCCTL1 |= ADCSSEL_2|ADCSHP| ADCCONSEQ_1; // Clock source: SMCLK, Clock divider: 1, Pulse-mode
+    ADCCTL1 |= ADCSSEL_2|ADCSHP| ADCCONSEQ_0; // Clock source: SMCLK, Clock divider: 1, Pulse-mode
     ADCCTL2 |= ADCRES;                        // Resolution: 10-bit
     ADCMCTL0 |= ADCINCH_9;                    // Select A9 for ADC input channel
 
@@ -120,6 +120,13 @@ void SetServoPosition(int x)
 }*/
 
 
+
+int analogRead()
+{
+    ADCCTL0 |= ADCENC | ADCSC; // Start conversion
+    while (ADCCTL1 & ADCBUSY); // Wait for conversion to complete
+    return ADCMEM0; // Return conversion result
+}
 
 
 
