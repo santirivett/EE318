@@ -13,15 +13,15 @@ void setupadc()
     //Step 1: Pin  Select P8.1 for ADC function
 
     GPIO_setAsPeripheralModuleFunctionOutputPin(GPIO_PORT_P8, GPIO_PIN1, GPIO_PRIMARY_MODULE_FUNCTION);
-    //P8SEL0|= BIT1;
+
      P1SEL0 |= BIT1;
 
    //Step 2: Configure CLK source
 
-    ADCCTL0 |= ADCSHT_2 | ADCON;               // Sample and hold time, ADC on, 16 ADCCLK cycles
-    ADCCTL1 |= ADCSSEL_2|ADCSHP| ADCCONSEQ_0; // Clock source: SMCLK, Clock divider: 1, Pulse-mode
-    ADCCTL2 |= ADCRES;                        // Resolution: 10-bit
-    ADCMCTL0 |= ADCINCH_9;                    // Select A9 for ADC input channel
+    ADCCTL0 |= ADCSHT_2 | ADCON;                // Sample and hold time, ADC on, 16 ADCCLK cycles
+    ADCCTL1 |= ADCSSEL_2|ADCSHP| ADCCONSEQ_0;  // Clock source: SMCLK, Clock divider: 1, Pulse-mode
+    ADCCTL2 |= ADCRES;                         // Resolution: 10-bit
+    ADCMCTL0 |= ADCINCH_9;                     // Select A9 for ADC input channel
 
     // Enable ADC interrupt
 
@@ -53,8 +53,8 @@ void configureMotor ()
      GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN7);        // PWM pin on MSP430
      P1SEL0 |= BIT7;
 
-     TA0CCR0=20000;
-     TA0CCR1=1500;
+     TA0CCR0=20000;     //PWM 20ms
+     TA0CCR1=1500;      //duty cycle of 1.5ms
      TA0CCTL1 |= OUTMOD_7;
      TA0CTL = TASSEL_2 + MC_1;
     // __delay_cycles(2000000); // Delay to reach position
@@ -81,7 +81,7 @@ void configureMotor ()
          */
 }
 
-// Later on implement switch on joystick to do this implementation
+
 
 void setzeroposition()
 {
@@ -92,34 +92,20 @@ void setzeroposition()
 
 
     TA0CCR0=20000;  //PWM (20ms)
-    TA0CCR1=1500;
+    TA0CCR1=2500;
     TA0CCTL1 |= OUTMOD_7;
     TA0CTL = TASSEL_2 + MC_1;
 
 }
+
+
+
 
 void SetServoPosition(int x)
 {
     int duty_cycle = (x * 1000 / 180) + 1000;
     TA0CCR1=duty_cycle;
 }
-
-
-
-
-
-/*void joystickRead(unsigned int *xAxis)
-{
-    ADCCTL0&= ~ADCSC;
-    ADCCTL0|=ADCSC;
-
-    while(!(ADCIFG & ADCIFG1));     // wait for ADC conversion to complete
-
-        *xAxis = ADCMEM0;           // store memory location
-
-}*/
-
-
 
 int analogRead()
 {
