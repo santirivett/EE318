@@ -42,7 +42,7 @@
 
 #include <msp430fr4133.h>
 #include "driverlib.h"
-   
+
 #ifndef HAL_LCD_H_
 #define HAL_LCD_H_
 
