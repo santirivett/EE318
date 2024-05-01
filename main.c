@@ -10,14 +10,11 @@ void leaderboard(int x)
     showChar(((x / 100) % 10) + 48, pos2);
     showChar(((x / 10) % 10) + 48, pos3);
     showChar(((x / 1) % 10) + 48, pos4);
-    showChar('K', pos5);
-    showChar('W', pos6);
 }
 
 long joystickValue = 0;
 long servoPosition =0;
 
-#define DELAY_CYCLES_PER_SECOND 1000000 // Adjust this value based on your system's clock frequency
 
 volatile unsigned int seconds = 120; // Initial count down time in seconds
 
@@ -29,9 +26,6 @@ volatile bool SW2_interruptFlag_ = false;
 
 void configureButtonS1S2Interrupt(void)
 {
-
-
-
     P1DIR &= ~(BIT3 | BIT4); // Clearing the bits sets them as input (using bitwise AND with the complement)
 
     // Enable pull-up resistors on P1.3 and P1.4 (PxOUT and PxREN registers)
@@ -64,6 +58,7 @@ __interrupt void Port_1(void)
     GPIO_clearInterrupt(GPIO_PORT_P1, GPIO_PIN3);    //Technically a redundant statement as the even in range cleared this
     __delay_cycles(100000); //debounce the button press
     break;
+
 
     // Case for the interrupt flag from pin P1.4. It's similar to the previous case but for
     // pin P1.4, which is associated with button S2.
@@ -186,10 +181,13 @@ int main(void)
         // SW1 has replace the old pooling for the pinstate (current button state)
         if (SW1_interruptFlag_)    //SW1 pressed therefore display Player 1 stats
         {
+            seconds--;
             displayScrollText("PLAYER 1 STATS");
-            unsigned int timer = 500; // 5 seconds timer
+
+            unsigned int timer = 800; // 3 seconds timer
              while(timer>0)                                      // try implement an escape
                  {
+
                  // Read joystick input
                    int servoVal = analogRead();
 
@@ -203,9 +201,11 @@ int main(void)
                   __delay_cycles(20);
                    ADCCTL0 |= ADCENC | ADCSC;                           // Sampling and conversion start
 
+
                      while( (ADCIFG & ADCIFG0) == 0 );
 
                      if (!SW1_interruptFlag_ || SW2_interruptFlag_ )  // Implementing an escape
+
                        break;
 
                      ADC_Result = ADCMEM0;
@@ -220,12 +220,11 @@ int main(void)
                      showChar('W',pos6);
                      __delay_cycles(5000);
                      timer--;
+
                      ADC_Result1+=ADC_Result;
-
-
                  }
 
-
+             seconds--;seconds--;seconds--;seconds--;seconds--;seconds--;
 
 
 
@@ -235,7 +234,7 @@ int main(void)
         if (SW2_interruptFlag_)
         {
             displayScrollText("PLAYER 2 STATS");
-            unsigned int timer = 500; // 5 seconds timer
+            unsigned int timer = 800; // 3 seconds timer
 
             while(timer>0)                                                       // try implement an escape
              {
@@ -271,9 +270,11 @@ int main(void)
                  showChar('W',pos6);
                  __delay_cycles(5000);
                  timer --;
+
                  ADC_Result2+=ADC_Result;
 
              }
+            seconds--;seconds--;seconds--;seconds--;seconds--;seconds--;
 
 
             SW2_interruptFlag_ = 0; // Clear the interrupt flag
